@@ -4,7 +4,6 @@ const mat4 = glMatrix.mat4;
 const quat = glMatrix.quat;
 const vec3 = glMatrix.vec3;
 
-
 export default class Bullet extends Node {
 	constructor(options = {}) {
 		super(options = {});

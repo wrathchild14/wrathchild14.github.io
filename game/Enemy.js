@@ -5,7 +5,6 @@ const mat4 = glMatrix.mat4;
 const quat = glMatrix.quat;
 const vec3 = glMatrix.vec3;
 
-
 export default class Enemy extends Node {
 	constructor(options = {}) {
 		super(options = {});
@@ -22,9 +21,6 @@ export default class Enemy extends Node {
 		this.maxSpeed = 2;
 		this.friction = 0.2;
 		this.acceleration = 20;
-
-		// this.mesh = null; // put the mesh later
-
 		let min = vec3.scale(vec3.create(), this.scale, -1);
 		let max = vec3.scale(vec3.create(), this.scale, 1);
 		this.aabb = {

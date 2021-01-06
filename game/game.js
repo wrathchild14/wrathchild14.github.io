@@ -1,16 +1,9 @@
 import Application from '../../common/Application.js';
-// import * as WebGL from './WebGL.js';
 import GLTFLoader from './GLTFLoader.js';
 import Renderer from './Renderer.js';
-
 import PerspectiveCamera from './PerspectiveCamera.js';
-// import Node from './Node.js';
 import MyCamera from './MyCamera.js';
-// import Bullet from './Bullet.js';
 import Physics from './Physics.js';
-// import BulletPhysics from './BulletPhysics.js';
-// import OrthographicCamera from './OrthographicCamera.js';
-
 import Enemy from './Enemy.js';
 
 const mat4 = glMatrix.mat4;
@@ -18,7 +11,6 @@ const quat = glMatrix.quat;
 const vec3 = glMatrix.vec3;
 
 class App extends Application {
-
 	async start() {
 		this.loader = new GLTFLoader();
 		await this.loader.load('../../common/models/1level/1level.gltf');
@@ -36,9 +28,8 @@ class App extends Application {
 		this.my_enemy.translation = vec3.fromValues(100, -1, 0);
 		this.my_enemy.updateMatrix();
 
-		// this.kill_counter = -2; // it spawn 2 enemys, 
-		this.kill_counter = -15; // it spawn 2 enemys, 
-		// this.max_enemies = 10;
+		this.maxEnemies = 20;
+		this.kill_counter = - this.maxEnemies; // it spawn 2 enemys, 
 		// and it counts for every new guy spawned
 
 		// making the "player"
@@ -61,7 +52,6 @@ class App extends Application {
 
 		this.my_gun = await this.loader.loadNode("Gun");
 		this.camera.gun = this.my_gun;
-		console.log(this.camera.gun);
 
 		console.log(this.scene, this.physics);
 
@@ -71,10 +61,14 @@ class App extends Application {
 
 		this.pointerlockchangeHandler = this.pointerlockchangeHandler.bind(this);
 		document.addEventListener('pointerlockchange', this.pointerlockchangeHandler);
+
+		this.myAudio = document.createElement("audio");
+		this.myAudio.src = "../../common/models/1level/Rip & Off.mp3";
 	}
 
 	enableCamera() {
 		this.canvas.requestPointerLock();
+		this.myAudio.play();
 	}
 
 	pointerlockchangeHandler() {
@@ -115,6 +109,9 @@ class App extends Application {
 				this.physics.update(dt);
 			}
 
+			let my_kills = this.kill_counter - 1;
+			kills.innerHTML = "Kills: " + my_kills;
+
 			// checks how many enemies in the scene and if its less that 2, 
 			// randomly spawns in another enemy, can optimize this
 			if (this.scene) {
@@ -126,7 +123,7 @@ class App extends Application {
 				}
 			}
 
-			if (this.enemy_count <= 15) {
+			if (this.enemy_count <= this.maxEnemies) {
 				let enemy = new Enemy();
 				this.kill_counter++;
 				this.scene.kill_counter = this.kill_counter;
@@ -137,30 +134,10 @@ class App extends Application {
 				enemy.updateMatrix();
 				this.scene.addNode(enemy);
 			}
-
-			// if (this.kill_counter % 2 == 0) {
-			// 	this.max_enemies ++;
-			// }
-			// console.log(this.max_enemies);
-			
-
-			// if i make a barrier across all the level, delete this, 
-			// it would automaticly delete the bullet if it collides with the said strucutre
-
-			// delete the bullets if they are out of range 50 on x and y
-			if (this.scene) {
-				for (let i = 0; i < this.scene.nodes.length; i++) {
-					let x = this.scene.nodes[i].translation[0],
-						// y = this.scene.nodes[i].translation[1],
-						// no need for y
-						z = this.scene.nodes[i].translation[2];
-					if (x > 50 || x < -50) {
-						this.scene.nodes.splice(i, 1);
-					} else if (z > 50 || z < -50) {
-						this.scene.nodes.splice(i, 1);
-					}
-				}
-			}
+		}
+		else {
+			kills.innerHTML = "Player Dead";
+			if (this.myAudio) this.myAudio.pause();
 		}
 	}
 
@@ -185,6 +162,5 @@ class App extends Application {
 document.addEventListener('DOMContentLoaded', () => {
 	const canvas = document.querySelector('canvas');
 	const app = new App(canvas);
-	const gui = new dat.GUI();
-	gui.add(app, 'enableCamera');
+	document.addEventListener('click', () => app.enableCamera());
 });

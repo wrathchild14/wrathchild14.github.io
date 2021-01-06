@@ -1,20 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>D00M: Rip & Off</title>
+	<title>D00M: Rip & Off</title>
 
-    <link rel="stylesheet" type="text/css" href="../../common/style.css">
+	<link rel="stylesheet" type="text/css" href="../../common/style.css">
 
-    <script type="text/javascript" src="../../lib/gl-matrix-min.js"></script>
-    <script type="text/javascript" src="../../lib/dat.gui.min.js"></script>
-    <script type="module" src="game.js"></script>
-</head>
+	<script type="text/javascript" src="../../lib/gl-matrix-min.js"></script>
+	<script type="text/javascript" src="../../lib/dat.gui.min.js"></script>
+	<script type="module" src="game.js"></script>
+
+	<style>
+		h2 {
+			color: white;
+		}
+	</style>
 <body>
-    <div class="overlay">
-        <a class="back" href="../../index.html">Back</a>
-    </div>
-    <div class="fullscreen">
-        <canvas></canvas>
-    </div>
+	<div class="overlay">
+		<a class="back" href="../../index.html">Back</a>
+		<h2 id="kills">Kills: </h2>
+	</div>
+	<div class="fullscreen">
+		<canvas></canvas>
+	</div>
 </body>
 </html>
