@@ -136,7 +136,7 @@ class App extends Application {
 			}
 		}
 		else {
-			kills.innerHTML = "Player Dead";
+			kills.innerHTML = "Kills: " + (this.kill_counter - 1);
 			if (this.myAudio) this.myAudio.pause();
 			timer.innerHTML = "Alive: no";
 		}
