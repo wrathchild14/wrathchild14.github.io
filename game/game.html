@@ -16,11 +16,22 @@
 	</style>
 <body>
 	<div class="overlay">
-		<a class="back" href="../../index.html">Back</a>
-		<h2 id="kills">Kills: </h2>
+		<a class = "back" href="../../index.html">Back</a>
+		<h2 id = "kills"></h2>
+		<h2 id = "timer"></h2>
+
+		<script type="text/javascript">
+			// fast timer
+			let seconds = 0;
+			function incrementSeconds() {
+		    	seconds += 1;
+		    	timer.innerText = "Alive: " + seconds + " sec";
+			}
+			let cancel = setInterval(incrementSeconds, 1000);
+		</script>
 	</div>
 	<div class="fullscreen">
-		<canvas></canvas>
+	<canvas></canvas>
 	</div>
 </body>
 </html>

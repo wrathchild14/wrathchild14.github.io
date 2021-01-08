@@ -29,7 +29,7 @@ class App extends Application {
 		this.my_enemy.updateMatrix();
 
 		this.maxEnemies = 20;
-		this.kill_counter = - this.maxEnemies; // it spawn 2 enemys, 
+		this.kill_counter = - this.maxEnemies; // it spawn 2 enemys,
 		// and it counts for every new guy spawned
 
 		// making the "player"
@@ -43,7 +43,7 @@ class App extends Application {
 
 		this.bullets = [];
 		this.physics = new Physics(this.scene);
-		
+
 		// load the enemy bullet mesh here
 		this.enemy_bullet = await this.loader.loadNode("Enemy Bullet");
 		this.physics.enemyBulletMesh = this.enemy_bullet.mesh;
@@ -112,7 +112,7 @@ class App extends Application {
 			let my_kills = this.kill_counter - 1;
 			kills.innerHTML = "Kills: " + my_kills;
 
-			// checks how many enemies in the scene and if its less that 2, 
+			// checks how many enemies in the scene and if its less that 2,
 			// randomly spawns in another enemy, can optimize this
 			if (this.scene) {
 				this.enemy_count = 0;
@@ -138,6 +138,7 @@ class App extends Application {
 		else {
 			kills.innerHTML = "Player Dead";
 			if (this.myAudio) this.myAudio.pause();
+			timer.innerHTML = "Alive: no";
 		}
 	}
 

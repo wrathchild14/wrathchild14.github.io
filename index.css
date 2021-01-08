@@ -1,13 +1,16 @@
 body {
     margin-left: auto;
     margin-right: auto;
-    width: 500px;
-	height: 200px;
+    width: 100%;
+	height: 500px;
 	text-align: center;
+	background-image: url('common/models/hell.jpeg');
+	color: white;
+	font-size: 200%;
 }
 
 a {
-    color: black;
+    color: grey;
     text-decoration: none;
 	text-align: center;
 }
