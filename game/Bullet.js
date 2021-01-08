@@ -30,10 +30,9 @@ export default class Bullet extends Node {
 	update(dt) {
 		// voa go tere samo napredi da ode
 		const c = this;
-		const forward = vec3.set(vec3.create(),
-			-Math.sin(c.r[1]), 0, -Math.cos(c.r[1]));
+		const forward = vec3.set(vec3.create(), -Math.sin(c.r[1]), 0, -Math.cos(c.r[1]));
 
-		let acc = vec3.create(0,0,0);
+		let acc = vec3.create(0, 0, 0);
 		vec3.add(acc, acc, forward); // lazy fix
 		vec3.add(acc, acc, forward); // lazy fix
 		vec3.add(acc, acc, forward); // lazy fix

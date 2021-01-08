@@ -19,13 +19,13 @@ class App extends Application {
 
 		this.my_bullet = await this.loader.loadNode("Bullet");
 		// sphere is my bullet
-		this.my_bullet.translation = vec3.fromValues(0, -1, 0);
+		this.my_bullet.translation = vec3.fromValues(0, -2, 0);
 		this.my_bullet.updateMatrix();
 
 		// can be anyting
 		// make a name for this
 		this.my_enemy = await this.loader.loadNode("Enemy"); // "Enemy"
-		this.my_enemy.translation = vec3.fromValues(100, -1, 0);
+		this.my_enemy.translation = vec3.fromValues(100, -2, 0);
 		this.my_enemy.updateMatrix();
 
 		this.maxEnemies = 20;
@@ -47,7 +47,7 @@ class App extends Application {
 		// load the enemy bullet mesh here
 		this.enemy_bullet = await this.loader.loadNode("Enemy Bullet");
 		this.physics.enemyBulletMesh = this.enemy_bullet.mesh;
-		this.enemy_bullet.translation = vec3.fromValues(0, -1, 0);
+		this.enemy_bullet.translation = vec3.fromValues(0, -2, 0);
 		this.enemy_bullet.updateMatrix();
 
 		this.my_gun = await this.loader.loadNode("Gun");
@@ -112,7 +112,7 @@ class App extends Application {
 			let my_kills = this.kill_counter - 1;
 			kills.innerHTML = "Kills: " + my_kills;
 
-			// checks how many enemies in the scene and if its less that 2,
+			// checks how many enemies in the scene
 			// randomly spawns in another enemy, can optimize this
 			if (this.scene) {
 				this.enemy_count = 0;

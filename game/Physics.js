@@ -28,7 +28,7 @@ export default class Physics {
             }
             if (node.id == 'enemy') {
                 node.playerRotation = this.playerRotation;
-                
+
                 // i spawn the bullets here with every enemy update
                 let bullet = node.update(dt)
                 if (bullet) {
