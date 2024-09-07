@@ -1,4 +1,4 @@
-import Application from '../../common/Application.js';
+import Application from '../common/Application.js';
 import GLTFLoader from './GLTFLoader.js';
 import Renderer from './Renderer.js';
 import PerspectiveCamera from './PerspectiveCamera.js';
@@ -13,7 +13,7 @@ const vec3 = glMatrix.vec3;
 class App extends Application {
 	async start() {
 		this.loader = new GLTFLoader();
-		await this.loader.load('../../common/models/1level/1level.gltf');
+		await this.loader.load('../common/models/1level/1level.gltf');
 
 		this.scene = await this.loader.loadScene(this.loader.defaultScene);
 
