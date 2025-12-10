@@ -63,7 +63,7 @@ class App extends Application {
 		document.addEventListener('pointerlockchange', this.pointerlockchangeHandler);
 
 		this.myAudio = document.createElement("audio");
-		this.myAudio.src = "../../common/models/1level/Rip & Off.mp3";
+		this.myAudio.src = "../common/models/1level/Rip & Off.mp3";
 	}
 
 	enableCamera() {
