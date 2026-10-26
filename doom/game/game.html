@@ -1,37 +1,118 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>D00M: Rip & Off</title>
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#100b09" />
+        <title>D00M: Rip & Off — The arena</title>
+        <link rel="stylesheet" href="game.css" />
+        <script src="../lib/gl-matrix-min.js"></script>
+        <script type="module" src="game.js"></script>
+        <link rel="manifest" href="../manifest.webmanifest" />
+        <link rel="icon" href="../icons/icon-192.png" type="image/png" />
+        <link rel="apple-touch-icon" href="../icons/icon-180.png" />
+        <script type="module" src="../install.js"></script>
+    </head>
+    <body>
+        <canvas id="arena" tabindex="-1" aria-label="First-person survival arena"></canvas>
+        <div class="vignette" aria-hidden="true"></div>
+        <div id="damage" aria-hidden="true"></div>
+        <div id="finisher-flash" aria-hidden="true"></div>
 
-	<link rel="stylesheet" type="text/css" href="../common/style.css">
+        <header class="topbar">
+            <a href="../index.html" class="wordmark">D<span>00</span>M <small>RIP & OFF</small></a>
+            <div class="sector">SECTOR 01 <span> / </span> THE FURNACE</div>
+            <button id="pause" class="quiet" aria-label="Pause game">Ⅱ <span>PAUSE</span></button>
+        </header>
 
-	<script type="text/javascript" src="../lib/gl-matrix-min.js"></script>
-	<script type="text/javascript" src="../lib/dat.gui.min.js"></script>
-	<script type="module" src="game.js"></script>
+        <main id="hud" class="hud">
+            <div class="mission">
+                <span class="eyebrow">CONTAINMENT BREACHED</span>
+                <strong id="wave">WAVE 01</strong>
+                <span id="remaining">Awaiting deployment</span>
+            </div>
+            <div class="scoreboard">
+                <span class="eyebrow">SCORE</span>
+                <strong id="score">000000</strong>
+                <span id="best">BEST 000000</span>
+            </div>
+            <div id="crosshair" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            <div id="hitmarker" aria-hidden="true">×</div>
+            <div id="finisher-prompt" hidden>
+                <kbd>F</kbd> RIP & OFF <small>+ HEALTH / AMMO / DASH</small>
+            </div>
+            <div id="announcement" role="status"></div>
 
-	<style>
-		h2 {
-			color: white;
-		}
-	</style>
-<body>
-	<div class="overlay">
-		<a class = "back" href="../index.html">Back</a>
-		<h2 id = "kills"></h2>
-		<h2 id = "timer"></h2>
+            <div class="abilities">
+                <div id="dash-ability" class="ability">
+                    <span><kbd>SHIFT</kbd> DASH <b id="dash-count">2 / 2</b></span>
+                    <div class="track"><i id="dashbar"></i></div>
+                </div>
+                <div class="ability melee-ability">
+                    <span><kbd>F</kbd> <b id="melee-state">JAB / CROSS / CRUSH</b></span>
+                    <div class="track"><i id="meleebar"></i></div>
+                </div>
+                <div id="rage-ability" class="ability">
+                    <span><kbd>Q</kbd> BERSERK <b id="rage-state">0%</b></span>
+                    <div class="track"><i id="ragebar"></i></div>
+                </div>
+            </div>
 
-		<script type="text/javascript">
-			// fast timer
-			let seconds = 0;
-			function incrementSeconds() {
-		    	seconds += 1;
-		    	timer.innerText = "Alive: " + seconds + " sec";
-			}
-			let cancel = setInterval(incrementSeconds, 1000);
-		</script>
-	</div>
-	<div class="fullscreen">
-	<canvas></canvas>
-	</div>
-</body>
+            <div class="bottomhud">
+                <div class="health stat">
+                    <span class="eyebrow">✚ VITAL SIGNS</span>
+                    <div><strong id="health">100</strong><small>%</small></div>
+                    <div class="track"><i id="healthbar"></i></div>
+                </div>
+                <div class="runstats">
+                    <span>ELIMINATIONS <b id="kills">0</b></span>
+                    <span>TIME ALIVE <b id="timer">00:00</b></span>
+                    <span id="combo">GET CLOSE. TAKE IT BACK.</span>
+                </div>
+                <div class="weapon stat">
+                    <span class="eyebrow" id="weaponname">01 / PULSE RIFLE</span>
+                    <div><strong id="ammo">30</strong><small id="capacity">/ 30</small></div>
+                    <div class="track"><i id="ammobar"></i></div>
+                </div>
+            </div>
+            <div class="keyhint">
+                WASD <span>MOVE</span> SHIFT / SPACE <span>DASH</span> F <span>MELEE</span> Q
+                <span>BERSERK</span> R <span>RELOAD</span> 1 / 2 <span>WEAPON</span>
+            </div>
+        </main>
+
+        <section id="menu" class="veil" aria-label="Game menu">
+            <div class="panel">
+                <div class="eyebrow" id="menuLabel">ESTABLISHING UPLINK</div>
+                <h1 id="menuTitle">RIP. DASH.<br /><em>REPEAT.</em></h1>
+                <p id="menuText">Loading the original arena. Hell is worth the wait.</p>
+                <div id="results" class="results" hidden></div>
+                <button id="play" class="primary" disabled>LOADING ARENA…</button>
+                <button id="fallback" class="secondary" hidden>PLAY IN WINDOWED MODE →</button>
+                <button id="restart" class="secondary" hidden>RESTART RUN</button>
+                <div class="settings">
+                    <label>SOUND <input id="sound" type="checkbox" checked /></label>
+                    <label>EMBER FX <input id="effects" type="checkbox" checked /></label>
+                    <label
+                        >AIM SENSITIVITY
+                        <input
+                            id="sensitivity"
+                            aria-label="Aim sensitivity"
+                            type="range"
+                            min="1"
+                            max="10"
+                            value="4"
+                    /></label>
+                </div>
+                <p class="menuhelp">
+                    WASD: move · Mouse: aim & fire · Shift / Space: dash<br />
+                    F: melee / finisher · Q: berserk · R: reload<br />
+                    1 / 2: weapons · Esc / P: pause<br />
+                    Windowed mode: right-drag or arrow keys to aim
+                </p>
+                <a href="../index.html" class="return">← RETURN TO BRIEFING</a>
+            </div>
+            <span class="corner">JOVAN PRODANOV / D00M: RIP & OFF</span>
+        </section>
+    </body>
 </html>

@@ -1,0 +1,9 @@
+{
+    "name": "doom-rip-and-off",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "test": "node --test tests/*.test.mjs",
+        "offline": "node scripts/update-offline.mjs"
+    }
+}

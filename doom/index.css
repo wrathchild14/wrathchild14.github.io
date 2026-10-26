@@ -1,20 +1,269 @@
-body {
-    margin-left: auto;
-    margin-right: auto;
+@import url('common/theme.css');
+.landing {
+    min-height: 100svh;
+    background:
+        linear-gradient(90deg, #100b09f5 0%, #100b09cb 42%, #100b0944 100%),
+        linear-gradient(0deg, #100b09 0%, transparent 65%),
+        url('common/models/hell.jpeg') center/cover fixed;
+}
+
+.landing:after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, #00000015 4px);
+    opacity: 0.5;
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 6vw;
+    border-bottom: 1px solid #d6a26a25;
+}
+
+.brand {
+    font-weight: 900;
+    font-size: 24px;
+    letter-spacing: -1px;
+}
+
+.brand span {
+    color: var(--ember);
+}
+
+.nav a:last-child {
+    font: 10px monospace;
+    letter-spacing: 2px;
+    color: var(--muted);
+}
+
+.hero {
+    position: relative;
+    max-width: 1500px;
+    margin: auto;
+    padding: 9vh 8vw 6vh;
+    z-index: 1;
+}
+
+.kicker {
+    font: 10px monospace;
+    letter-spacing: 3px;
+    color: var(--ember);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.kicker:before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    background: var(--ember);
+    box-shadow: 0 0 16px #f26632;
+}
+
+.hero h1 {
+    font:
+        900 clamp(90px, 14vw, 190px) / 0.79 Impact,
+        'Arial Narrow',
+        sans-serif;
+    letter-spacing: -0.035em;
+    margin: 37px 0 12px;
+    text-shadow: 3px 5px #3b1b12;
+}
+
+.hero h1 span {
+    color: var(--ember);
+}
+
+.subtitle {
+    font:
+        900 clamp(20px, 3vw, 35px) Impact,
+        'Arial Narrow',
+        sans-serif;
+    letter-spacing: 12px;
+    color: #d6b990;
+    margin: 24px 0 33px;
+}
+
+.intro {
+    max-width: 405px;
+    color: #c1ae98;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.intro strong {
+    color: var(--paper);
+}
+
+.cta {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin: 35px 0 45px;
+}
+
+.cta small {
+    font: 9px/1.8 monospace;
+    letter-spacing: 1px;
+    color: #9d8b77;
+}
+
+.briefing {
+    display: flex;
+    gap: 38px;
+    border-top: 1px solid #ad825c42;
+    padding-top: 24px;
+    max-width: 640px;
+}
+
+.briefing article {
+    flex: 1;
+}
+
+.briefing b {
+    font: 10px monospace;
+    letter-spacing: 2px;
+    color: var(--ember);
+}
+
+.briefing p {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #ab9a86;
+    margin-bottom: 0;
+}
+
+.landing footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 23px 6vw;
+    border-top: 1px solid #ad825c25;
+    font: 9px monospace;
+    letter-spacing: 2px;
+    color: #8f7c68;
+}
+
+.seal {
+    position: absolute;
+    right: 9%;
+    top: 30%;
+    border: 1px solid #ec9b6644;
+    padding: 22px;
+    transform: rotate(-5deg);
+    font: 11px/2 monospace;
+    letter-spacing: 4px;
+    color: #efc28a;
+    text-align: center;
+    background: #230d0644;
+}
+
+.seal strong {
+    display: block;
+    font-size: 32px;
+}
+
+.control-guide {
+    font: 10px/1.8 monospace;
+    color: #988772;
+    margin-top: 26px;
+}
+
+.control-guide kbd {
+    color: #dfcbb1;
+    border: 1px solid #806244;
+    padding: 3px 5px;
+    margin-right: 5px;
+}
+
+@media (max-width: 760px) {
+    .hero {
+        padding: 60px 7vw 35px;
+    }
+
+    .seal {
+        display: none;
+    }
+
+    .hero h1 {
+        font-size: clamp(90px, 22vw, 150px);
+    }
+
+    .subtitle {
+        letter-spacing: 8px;
+    }
+
+    .briefing {
+        gap: 20px;
+    }
+
+    .cta {
+        flex-wrap: wrap;
+    }
+
+    .landing footer {
+        font-size: 8px;
+        line-height: 1.8;
+    }
+
+    .landing {
+        background-position: 60% center;
+    }
+}
+.install-panel {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 50px;
+    margin: 0 8vw 60px;
+    padding: 35px;
+    border: 1px solid #b57b4944;
+    background: #100b09dd;
+    position: relative;
+    z-index: 1;
+    scroll-margin-top: 25px;
+}
+.install-panel h2 {
+    font-size: 28px;
+    margin: 20px 0;
+}
+.install-panel p {
+    font-size: 13px;
+    line-height: 1.8;
+    color: #bbaa94;
+    max-width: 540px;
+}
+.install-panel .install-status {
+    color: #d7c8a8;
+    font: 10px/1.8 monospace;
+}
+.install-actions {
+    align-self: center;
+}
+.install-actions .primary {
     width: 100%;
-	height: 500px;
-	text-align: center;
-	background-image: url('common/models/hell.jpeg');
-	color: white;
-	font-size: 200%;
 }
-
-a {
-    color: grey;
-    text-decoration: none;
-	text-align: center;
+.install-actions .primary:disabled {
+    opacity: 0.65;
+    cursor: default;
 }
-
-a:hover {
-    background: #ddd;
+.install-actions details {
+    margin-top: 20px;
+    color: #d7c8a8;
+    font: 11px/1.8 monospace;
+}
+.install-actions summary {
+    cursor: pointer;
+}
+@media (max-width: 760px) {
+    .install-panel {
+        grid-template-columns: 1fr;
+        margin: 0 7vw 40px;
+        padding: 25px;
+        gap: 12px;
+    }
 }

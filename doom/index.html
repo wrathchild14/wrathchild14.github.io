@@ -1,26 +1,102 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-	<title>D00M: Rip & Off</title>
-
-	<link rel="stylesheet" type="text/css" href="common/style.css">
-	<link rel="stylesheet" type="text/css" href="index.css">
-</head>
-
-<body>
-	<h1>
-		<a href="game/game.html">
-			Play D00M: Rip & Off
-		</a>
-	</h1>
-
-
-	<h3>WASD and Mouse to play</h3>
-
-	<p>Try to get the most kills and not die. My personal best is 136 kills.</p>
-	<p>Jovan Prodanov</p>
-	<h4> <a href="../index.html">Back</a> </h4>
-</body>
-
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#100b09" />
+        <title>D00M: Rip & Off</title>
+        <link rel="stylesheet" href="index.css" />
+        <link rel="manifest" href="manifest.webmanifest" />
+        <link rel="icon" href="icons/icon-192.png" type="image/png" />
+        <link rel="apple-touch-icon" href="icons/icon-180.png" />
+        <script type="module" src="install.js"></script>
+    </head>
+    <body class="landing">
+        <nav class="nav">
+            <a class="brand" href="index.html">D<span>00</span>M</a>
+            <a href="../index.html">← ALL PROJECTS</a>
+        </nav>
+        <main class="hero">
+            <div class="kicker">OLD SCHOOL INSTINCT. ZERO MERCY.</div>
+            <h1>D<span>00</span>M</h1>
+            <p class="subtitle">RIP & OFF</p>
+            <p class="intro">
+                The gates are open. The arena is hungry.<br />
+                <strong>You are the containment protocol.</strong><br />
+                Dash into the pack. Break them with your fists. Turn a desperate fight into a full
+                recovery. Hell rewards aggression.
+            </p>
+            <div class="cta">
+                <a class="primary" href="game/game.html">ENTER THE ARENA <span>↗</span></a>
+                <small>FREE TO PLAY / IN YOUR BROWSER<br />DESKTOP · KEYBOARD & MOUSE</small>
+            </div>
+            <div class="briefing">
+                <article>
+                    <b>01 / CLOSE THE GAP</b>
+                    <p>
+                        Two dashes. Faster movement. Dodge fireballs and punish a brute's missed
+                        charge.
+                    </p>
+                </article>
+                <article>
+                    <b>02 / RIP & RECOVER</b>
+                    <p>
+                        Jab, cross, crush. Finish a glowing demon to reclaim health, ammo, and a
+                        dash.
+                    </p>
+                </article>
+                <article>
+                    <b>03 / GO BERSERK</b>
+                    <p>
+                        Build rage through kills. Unleash seven seconds of doubled melee damage and
+                        extra speed.
+                    </p>
+                </article>
+            </div>
+            <p class="control-guide">
+                <kbd>WASD</kbd> MOVE &nbsp; <kbd>MOUSE</kbd> AIM + FIRE &nbsp;
+                <kbd>SHIFT</kbd> DASH<br />
+                <kbd>F</kbd> MELEE / FINISHER &nbsp; <kbd>Q</kbd> BERSERK &nbsp;
+                <kbd>1 / 2</kbd> WEAPONS<br />
+                <kbd>R</kbd> RELOAD &nbsp; <kbd>ESC / P</kbd> PAUSE
+            </p>
+            <div class="seal">ENDLESS SURVIVAL<strong>SECTOR 01</strong>THE FURNACE</div>
+        </main>
+        <section class="install-panel" id="install" aria-labelledby="install-title">
+            <div>
+                <p class="kicker">KEEP HELL ON SPEED DIAL</p>
+                <h2 id="install-title">Your desktop. Your arena.</h2>
+                <p>
+                    Install Rip & Off as a standalone app. Launch from your desktop and play offline
+                    after the game finishes downloading. No account. No store.
+                </p>
+                <p class="install-status" data-offline-status role="status">
+                    Checking offline availability…
+                </p>
+            </div>
+            <div class="install-actions">
+                <button class="primary" data-install>Install options ↓</button>
+                <details data-install-help>
+                    <summary>Installation help</summary>
+                    <p>
+                        In desktop Chrome or Edge, use the install icon in the address bar or the
+                        browser's app menu. In Safari on Mac, use File → Add to Dock when available.
+                    </p>
+                    <p>
+                        If this embedded browser does not offer installation, open this site in your
+                        regular browser. Keyboard and mouse are still required; installing does not
+                        add touch controls.
+                    </p>
+                    <p>
+                        Offline files remain available unless your browser clears or evicts site
+                        storage. Reopen online to download them again.
+                    </p>
+                </details>
+            </div>
+        </section>
+        <footer>
+            <span>CREATED BY JOVAN PRODANOV</span>
+            <span>NO CHECKPOINTS. JUST ONE MORE RUN.</span>
+        </footer>
+    </body>
 </html>
