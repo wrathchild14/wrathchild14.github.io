@@ -2,7 +2,7 @@ import Node from './engine/Node.js';
 import Renderer from './engine/Renderer.js';
 import PostProcessing from './engine/PostProcessing.js';
 import PerspectiveCamera from './engine/PerspectiveCamera.js';
-import { ENEMIES, WEAPONS } from './config.js';
+import { ENEMIES, PLAYER, WEAPONS } from './config.js';
 
 const { vec3, quat } = glMatrix;
 
@@ -32,10 +32,12 @@ export default class View {
 
     reset() {
         this.particles = [];
+        this.corpses = [];
+        this.projectileTrails = new WeakMap();
         this.recoil = 0;
         this.swingRemaining = 0;
         this.swingStep = 0;
-        this.feedback = { damage: 0, hit: 0, finisher: 0 };
+        this.feedback = { damage: 0, hit: 0, finisher: 0, shot: 0 };
     }
 
     makeWeapon() {
@@ -59,16 +61,37 @@ export default class View {
         this.knuckles.solidColor = [0.85, 0.58, 0.23];
         this.muzzle = new Node({ mesh: this.arena.meshes.spark, scale: [0.07, 0.07, 0.12] });
         this.muzzle.solidColor = [3, 1.6, 0.3];
+        this.muzzle.effect = 2;
     }
 
     handle(event) {
-        if (event.type === 'shot') this.recoil = WEAPONS[event.weapon].recoil;
+        if (event.type === 'shot') {
+            this.recoil = WEAPONS[event.weapon].recoil;
+            this.feedback.shot = event.weapon === 1 ? 0.24 : 0.14;
+        }
         if (event.type === 'damage') this.feedback.damage = 0.65;
         if (event.type === 'hit') {
             this.feedback.hit = 0.13;
             this.burst(event.position, [1, 0.16, 0.05], 4);
         }
-        if (event.type === 'kill') this.burst(event.position, [1, 0.25, 0.08], 14);
+        if (event.type === 'kill') {
+            this.burst(event.position, [1, 0.25, 0.08], 14);
+            if (this.postProcessing?.enabled && !this.reducedMotion) {
+                const scale = event.kind === 'brute' ? 1.3 : 1;
+                const corpse = new Node({
+                    mesh: this.arena.meshes.enemy,
+                    translation: event.position,
+                    scale: [scale, scale, scale],
+                });
+                quat.fromEuler(corpse.rotation, 0, ((event.yaw || 0) * 180) / Math.PI, 0);
+                corpse.updateMatrix();
+                corpse.tint = ENEMIES[event.kind]?.tint || [1, 1, 1];
+                corpse.effect = 3;
+                corpse.life = 0.65;
+                this.corpses.push(corpse);
+                if (this.corpses.length > 24) this.corpses.shift();
+            }
+        }
         if (event.type === 'impact') this.burst(event.position, event.color, event.count);
         if (event.type === 'spawn') this.burst(event.position, [0.7, 0.15, 1.5], 8);
         if (event.type === 'melee') {
@@ -92,6 +115,7 @@ export default class View {
                 scale: [0.06, 0.06, 0.06],
             });
             node.solidColor = color;
+            node.effect = 1;
             node.life = 0.2 + Math.random() * 0.3;
             node.velocity = [
                 (Math.random() - 0.5) * 6,
@@ -115,6 +139,11 @@ export default class View {
             particle.updateMatrix();
         }
         this.particles = this.particles.filter((particle) => particle.life > 0);
+        for (const corpse of this.corpses) {
+            corpse.life -= dt;
+            corpse.dissolve = Math.min(1, 1 - corpse.life / 0.65);
+        }
+        this.corpses = this.corpses.filter((corpse) => corpse.life > 0);
     }
 
     nodeFor(entity, mesh) {
@@ -165,11 +194,33 @@ export default class View {
         this.camera.camera.fov = 1.35 + speedFov;
         this.camera.camera.updateMatrix();
 
-        const projectiles = run.projectiles.map((projectile) => {
+        const trails = [];
+        const effects = Boolean(this.postProcessing?.enabled);
+        const projectiles = run.projectiles.map((projectile, index) => {
             const node = this.nodeFor(projectile, this.arena.meshes.projectile);
             node.scale = [0.23, 0.23, 0.23];
             node.solidColor = [2, 0.4, 0.08];
+            node.effect = 1;
             node.updateMatrix();
+            if (effects && !this.reducedMotion && index < 24) {
+                if (!this.projectileTrails.has(projectile)) {
+                    this.projectileTrails.set(projectile, [0, 1, 2].map(() => {
+                        const tail = new Node({ mesh: this.arena.meshes.projectile });
+                        tail.solidColor = [1.5, 0.3, 0.015];
+                        tail.effect = 1;
+                        return tail;
+                    }));
+                }
+                for (const [i, tail] of this.projectileTrails.get(projectile).entries()) {
+                    const size = 0.16 - i * 0.04;
+                    tail.scale = [size, size, size];
+                    // Limit the tail to the distance traveled since this projectile spawned.
+                    const delay = Math.min((i + 1) * 0.018, Math.max(0, 5 - projectile.life));
+                    vec3.scaleAndAdd(tail.translation, projectile.position, projectile.velocity, -delay);
+                    tail.updateMatrix();
+                    trails.push(tail);
+                }
+            }
             return node;
         });
         const pickups = run.pickups.map((pickup) => {
@@ -184,7 +235,9 @@ export default class View {
         this.arena.scene.nodes = [
             ...this.arena.staticNodes,
             ...this.enemyNodes(run),
+            ...(effects && !this.reducedMotion ? this.corpses : []),
             ...projectiles,
+            ...trails,
             ...pickups,
             ...this.particles,
         ];
@@ -197,6 +250,8 @@ export default class View {
             reducedMotion: this.reducedMotion,
             rage: run.player.berserk,
             damage: this.feedback.damage,
+            dash: Math.min(1, run.player.dashRemaining / PLAYER.dashDuration),
+            finisher: Math.min(1, this.feedback.finisher / 0.4),
         });
     }
 
@@ -223,10 +278,13 @@ export default class View {
         const reloadDrop = run.combat.reloadRemaining > 0 ? 0.25 : 0;
         const offset = [0.23, -0.36 - reloadDrop + bob, -0.75 + this.recoil];
         this.gunParts[0].scale = run.combat.weapon === 1 ? [0.12, 0.11, 0.27] : [0.09, 0.1, 0.32];
+        const flash = effectsForShot(this);
         for (const part of this.gunParts) {
+            part.glow = [flash * 0.5, flash * 0.17, flash * 0.025];
             this.drawHeld(part, vec3.add(vec3.create(), offset, part.offset), viewProjection);
         }
         if (this.recoil > (run.combat.weapon === 1 ? 0.14 : 0.05)) {
+            this.muzzle.scale = [0.07 + flash * 0.08, 0.07 + flash * 0.08, 0.12 + flash * 0.2];
             this.drawHeld(
                 this.muzzle,
                 [offset[0], offset[1] - 0.015, offset[2] - 0.57],
@@ -255,4 +313,8 @@ export default class View {
         this.gl.viewport(0, 0, width, height);
         this.camera.camera.aspect = width / height;
     }
+}
+
+function effectsForShot(view) {
+    return view.postProcessing?.enabled && !view.reducedMotion ? view.feedback.shot / 0.24 : 0;
 }

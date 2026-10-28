@@ -202,6 +202,8 @@ export default class Renderer {
             gl.uniform3fv(program.uniforms.uTint, node.tint || [1, 1, 1]);
             gl.uniform3fv(program.uniforms.uGlow, node.glow || [0, 0, 0]);
             gl.uniform3fv(program.uniforms.uSolidColor, node.solidColor || [-1, -1, -1]);
+            gl.uniform1i(program.uniforms.uEffect, this.effectsEnabled ? node.effect || 0 : 0);
+            gl.uniform1f(program.uniforms.uDissolve, node.dissolve || 0);
             for (const primitive of node.mesh.primitives) {
                 this.renderPrimitive(primitive);
             }

@@ -47,6 +47,8 @@ uniform float uTime;
 uniform float uMotion;
 uniform float uRage;
 uniform float uDamage;
+uniform float uDash;
+uniform float uFinisher;
 uniform vec2 uResolution;
 
 float grain(vec2 p) {
@@ -54,6 +56,13 @@ float grain(vec2 p) {
 }
 
 void main() {
+    vec2 centered = vUv * 2.0 - 1.0;
+    vec2 radial = (vUv - 0.5) * vec2(uResolution.x / uResolution.y, 1.0);
+    float radius = length(radial);
+    float edge = smoothstep(0.3, 1.45, dot(centered, centered));
+    // Expanding, short-lived pressure ring; aspect correction keeps it circular.
+    float waveRadius = (1.0 - uFinisher) * 1.7;
+    float wave = exp(-pow((radius - waveRadius) * 24.0, 2.0)) * uFinisher;
     vec3 light = texture(uBloom, vUv).rgb;
     float heat = smoothstep(0.2, 0.8, light.r) * uMotion;
     // Distortion is confined to bright heat sources and stays below two pixels.
@@ -61,21 +70,47 @@ void main() {
         sin(vUv.y * 150.0 + uTime * 1.8),
         sin(vUv.x * 120.0 - uTime * 1.3)
     ) * heat * 1.4 / uResolution;
-    vec2 uv = clamp(vUv + shimmer, vec2(0.001), vec2(0.999));
+    vec2 shock = centered * wave * 0.012;
+    vec2 uv = clamp(vUv + shimmer - shock, vec2(0.001), vec2(0.999));
     vec3 color = texture(uScene, uv).rgb;
+    // Peripheral speed trails leave the aiming area clear. No extra render targets.
+    float speed = uDash * edge;
+    if (speed > 0.001) {
+        vec2 trail = centered * speed * 0.018;
+        color = color * 0.5
+            + texture(uScene, uv - trail).rgb * 0.3
+            + texture(uScene, uv - trail * 2.0).rgb * 0.2;
+    }
+    float split = (uDash * 2.5 + uDamage * 1.5 + uRage * 0.8) * edge * uMotion;
+    if (split > 0.001) {
+        vec2 offset = centered * split / uResolution;
+        vec3 fringe = vec3(texture(uScene, uv + offset).r, color.g,
+            texture(uScene, uv - offset).b);
+        color = mix(color, fringe, 0.65);
+    }
+    // Wide, low-energy horizontal streaks around emissive highlights.
+    vec2 streak = vec2(18.0 / uResolution.x, 0.0);
+    vec3 flare = (texture(uBloom, vUv + streak).rgb
+        + texture(uBloom, vUv - streak).rgb) * 0.5;
 
     // Deep teal shadows + amber highlights, with a restrained warm bloom.
     float luminance = dot(color, vec3(0.2126, 0.7152, 0.0722));
     vec3 shadows = vec3(0.015, 0.025, 0.026) * (1.0 - smoothstep(0.0, 0.5, luminance));
     color = pow(max(color, vec3(0.0)), vec3(1.08)) * vec3(1.05, 0.98, 0.91);
     color += shadows + light * vec3(1.0, 0.69, 0.36) * 0.36;
+    color += flare * vec3(1.0, 0.48, 0.18) * 0.12;
     // Soft highlight compression keeps lava texture visible inside the glow.
     color = color / (vec3(1.0) + color * 0.2) * 1.13;
 
-    vec2 centered = vUv * 2.0 - 1.0;
-    float edge = smoothstep(0.3, 1.45, dot(centered, centered));
     color *= 1.0 - edge * 0.24;
     color += edge * vec3(0.14, 0.012, 0.003) * max(uRage * 0.55, uDamage);
+    float angle = atan(radial.y, radial.x + 0.00001);
+    float tendrils = 0.5 + 0.5 * sin(angle * 13.0 + radius * 18.0 - uTime * 2.5
+        + sin(angle * 7.0 + uTime) * 1.5);
+    float aura = edge * edge * tendrils * uRage;
+    color += vec3(0.22, 0.045, 0.008) * aura;
+    color += vec3(0.04, 0.13, 0.19) * speed * 0.35;
+    color += vec3(0.22, 0.10, 0.025) * wave;
     float noise = grain(gl_FragCoord.xy + floor(uTime * 24.0) * uMotion);
     color += (noise - 0.5) / 180.0;
     oColor = vec4(clamp(color, 0.0, 1.0), 1.0);

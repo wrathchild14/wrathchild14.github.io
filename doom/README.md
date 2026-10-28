@@ -120,6 +120,10 @@ node --test doom/tests/*.test.mjs
 3. Blur vertically into a second half-resolution target.
 4. Composite the original scene with warm bloom, teal shadow grading, soft highlight compression, vignette, fine grain, and heat-source-localized distortion. The DOM HUD is drawn above the result and remains sharp.
 
+The composite also adds horizontal ember-light streaks, peripheral dash trails with a cool tint and chromatic separation, expanding amber finisher shockwaves, and a flowing berserk aura. Combat effects use the current dash and presentation feedback timers, so they pause and reset with the run. The center stays clear for aiming. These effects share the existing composite pass and require no additional render targets; dash trail samples run only during a dash. Reduced motion disables trails, shockwaves, and color separation, and freezes the aura.
+
 The material shader in `engine/shaders.js` also gives lava textures gentle UV flow and pulsing emissive veins. This is enabled only for the actual lava material, so enemy faces and UI are not distorted.
+
+Combat materials add animated plasma veins to fireballs, muzzle flashes, and sparks. Fireballs have three tapered trailing embers (capped at 24 projectile trails), and firing briefly lights the held weapon. Kills leave a visual-only copy of the enemy that dissolves through glowing burn edges over 0.65 seconds; at most 24 copies exist, with no collision or gameplay state. Reduced motion freezes plasma flow and disables the additional trails, weapon illumination/enlargement, and death dissolves. Ember FX switches all these additions off. Restart clears transient effects.
 
 The **Ember FX** checkbox bypasses the post-processing and animated material effects. Reduced-motion preferences freeze shader time and disable animated distortion/grain. The pipeline uses standard WebGL 2 RGBA8 targets without requiring floating-point framebuffer extensions. Old targets are deleted on resize, and unavailable targets fall back to the original renderer.

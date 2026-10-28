@@ -102,7 +102,7 @@ export default class PostProcessing {
         gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
 
-    finish({ time, reducedMotion, rage, damage }) {
+    finish({ time, reducedMotion, rage, damage, dash = 0, finisher = 0 }) {
         if (!this.enabled) return;
         const gl = this.gl;
         gl.disable(gl.DEPTH_TEST);
@@ -119,10 +119,12 @@ export default class PostProcessing {
         this.texture(this.vertical.texture, 1);
         gl.uniform1i(program.uniforms.uScene, 0);
         gl.uniform1i(program.uniforms.uBloom, 1);
-        gl.uniform1f(program.uniforms.uTime, time);
+        gl.uniform1f(program.uniforms.uTime, reducedMotion ? 0 : time);
         gl.uniform1f(program.uniforms.uMotion, reducedMotion ? 0 : 1);
         gl.uniform1f(program.uniforms.uRage, rage ? 1 : 0);
         gl.uniform1f(program.uniforms.uDamage, damage);
+        gl.uniform1f(program.uniforms.uDash, reducedMotion ? 0 : dash);
+        gl.uniform1f(program.uniforms.uFinisher, reducedMotion ? 0 : finisher);
         gl.uniform2f(program.uniforms.uResolution, this.width, this.height);
         gl.drawArrays(gl.TRIANGLES, 0, 3);
         gl.enable(gl.DEPTH_TEST);

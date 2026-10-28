@@ -28,6 +28,21 @@ function enemyAhead(run, kind = 'hunter', range = 2.5) {
     return enemy;
 }
 
+test('kill presentation receives a detached pose and emits only once', () => {
+    const run = createRun();
+    const enemy = enemyAhead(run, 'brute');
+    enemy.yaw = 0.7;
+    run.kill(enemy, 'shot');
+    run.kill(enemy, 'shot');
+    const deaths = run.drainEvents().filter((event) => event.type === 'kill');
+    assert.equal(deaths.length, 1);
+    assert.equal(deaths[0].kind, 'brute');
+    assert.equal(deaths[0].yaw, 0.7);
+    assert.deepEqual(deaths[0].position, [0, 1, -2.5]);
+    enemy.position[0] = 42;
+    assert.equal(deaths[0].position[0], 0);
+});
+
 test('simulation imports and runs without DOM, WebGL, audio, or glMatrix', () => {
     assert.equal(typeof document, 'undefined');
     assert.equal(typeof glMatrix, 'undefined');

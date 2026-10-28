@@ -101,7 +101,9 @@ export default class Run {
         if (this.kills % 4 === 0) {
             this.pickups.push({ position: [...enemy.position], life: 15 });
         }
-        this.emit('kill', { position: [...enemy.position], source });
+        this.emit('kill', {
+            position: [...enemy.position], source, kind: enemy.kind, yaw: enemy.yaw,
+        });
     }
 
     damage(amount) {
